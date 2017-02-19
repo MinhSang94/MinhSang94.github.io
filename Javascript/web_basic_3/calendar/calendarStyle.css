@@ -1,0 +1,59 @@
+.datePicker {
+	/*width: 100px;*/
+	min-height: 10px;
+	background-color: #999999;
+}
+#calendar {
+	width: 460px;
+	min-height: 300px;
+	text-align: center;
+	display: none;
+	padding: 5px;
+	border: 1px solid #FFFFFF;
+}
+.row {
+	width: 460px;
+	height: 5px;
+	border: 1px solid #FFFFFF;
+}
+.col {
+	width: 60px;
+	height: 30px;
+	border: 1px solid #FFFFFF;
+}
+.day {
+	width: 60px;
+	height: 30px;	
+	background-color: green;
+	border: 1px solid #FFFFFF;
+}
+.activeDate {
+	width: 60px;
+	height: 30px;
+	background-color: red;
+	border: 1px solid #FFFFFF;
+}
+.deactiveDate {
+	width: 60px;
+	height: 30px;
+	background-color: blue;
+	border: 1px solid #FFFFFF;
+}
+.currentDate{
+	width: 60px;
+	height: 30px;
+	background-color: white;
+	border: 1px solid #FFFFFF;
+}
+.comboboxYear {
+	width: 58px;
+	height: 40px;
+}
+.comboboxMonth {
+	width: 120px;
+	height: 40px;
+}
+.comboboxMonth, .comboboxYear {
+	font-size: 14px;
+	line-height: 40px;
+}

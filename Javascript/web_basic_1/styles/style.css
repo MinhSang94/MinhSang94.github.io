@@ -1,0 +1,65 @@
+.main {
+	width: 600px;
+	height: 480px;
+	margin: auto;
+	padding: 20px 120px;
+	position: relative;
+}
+.slideDisplay {
+	width: 600px;
+	height: 480px;
+	border: 1px solid #999999;
+	position: relative;
+	overflow: hidden;
+}
+.slide {
+	width: 60px;
+	height: 480px;
+	position: relative;
+	left: 0px;
+	top: 0px;
+}
+.slideBox {
+	float: left;
+	display: none;
+	position: absolute;
+}
+.slideBox:first-child {
+	display: block;
+}
+#prev, #next {
+	width: 35px;
+	height: 55px;
+	position: absolute;
+	cursor: pointer;
+	opacity: 0.1;
+}
+#prev {
+	top: 220px;
+	left: 122px;
+	background: url('../images/button.png')  left -128px top -36px;
+}
+#next {
+	top: 220px;
+	left: 685px;
+	background: url('../images/button.png')  left 35px top -36px;
+}
+#prev:hover, #next:hover {
+	opacity: 0.5;
+}
+.quickChoose {
+	width: 602px;
+	height: 80px;
+}
+.quickChoose__img {
+	width: 100px;
+	height: 80px;
+	margin: 5px 10px;
+	float: left;
+}
+.quickChoose__img:first-child {
+	margin-left: 70px;
+}
+.quickChoose__img:hover {
+	border: 1px solid #999999;
+}

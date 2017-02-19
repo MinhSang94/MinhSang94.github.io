@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JavaSript Exercise 1</title>
+	<link rel="stylesheet" type="text/css" href="styles/style.css">
+</head>
+<body onload="onLoad()">
+	<div class="main">
+		<div>
+			<div class="slideDisplay">
+				<div class="slide" id="slide">
+					<img class="slideBox" src="images/1.jpg" alt=""/>
+					<img class="slideBox" src="images/2.jpg" alt=""/>
+					<img class="slideBox" src="images/3.jpg" alt=""/>
+					<img class="slideBox" src="images/4.jpg" alt=""/>
+				</div>
+			</div>
+			<div id="prev"></div>
+			<div id="next"></div>
+		</div>
+		<div class="quickChoose">
+			<img class="quickChoose__img" src="images/1.jpg" alt="" onclick="slide(0)"/>
+			<img class="quickChoose__img" src="images/2.jpg" alt="" onclick="slide(1)"/>
+			<img class="quickChoose__img" src="images/3.jpg" alt="" onclick="slide(2)"/>
+			<img class="quickChoose__img" src="images/4.jpg" alt="" onclick="slide(3)"/>
+		</div>
+	</div>
+	<script src="js/myJS.js"></script>
+</body>
+</html>

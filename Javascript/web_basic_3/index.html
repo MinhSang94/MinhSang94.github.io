@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JavaScript Exercise 3</title>
+	<link rel="stylesheet" type="text/css" href="signin/siginStyle.css">
+	<link rel="stylesheet" type="text/css" href="calendar/calendarStyle.css">
+</head>
+<body onload="onLoad()">
+	<div class="main">
+		<form id="form_signin" method="post" name="form_signin" action="demo.php">
+			<table>
+				<tr class="rowForm">
+					<td class="title">Username:</td>
+					<td><input type="text" name="username" value="" onchange="checkUsername()" id="username" class="input" /></td>
+					<td><p id="usernameAlert"></p></td>
+				</tr>
+				<tr class="rowForm">
+					<td class="title">Password:</td>
+					<td><input type="password" name="password" value="" onchange="checkPassword()" id="password" class="input"/></td>
+					<td><p id="passwordAlert"></p></td>
+				</tr>
+				<tr class="rowForm">
+					<td class="title">Email:</td>
+					<td><input type="email" name="email" value="" onchange="checkEmail()" id="email" class="input"/></td>
+					<td><p id="emailAlert"></p></td>
+				</tr>
+				<tr class="rowForm">
+					<td class="title">Birthday:</td>
+					<td>
+						<div id="container">
+							<div class="datePicker" id="datePicker">
+								<input type="text" onclick="inputClick()" name="dateSelected" id="dateSelected" class="input"/>
+							</div>
+						</div>
+					</td>
+					<td>
+						<p id="birdthdayAlert"></p>
+					</td>
+				</tr>
+				<tr class="rowForm">
+					<td><input type="button" name="btnSubmit" value="SUBMIT" id="btnSubmit" onclick="sendRequest()" class="button"/></td>
+					<td colspan="2">
+						<input type="reset" name="btnReset" value="REFRESH" class="button" onclick="resetValue()" />
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script src="calendar/calendar.js"></script>
+	<script src="signin/signin.js"></script>
+</body>
+</html>

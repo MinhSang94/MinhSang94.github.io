@@ -1,0 +1,14 @@
+#canvas {
+	margin-top: -5px;
+	/*width: 500px;
+	height: 500px;
+	margin: auto;*/
+}
+.container { 
+	width: 500px;
+	height: 650px;
+	margin: auto;
+}
+#action {
+	background-color: rgb(9, 17, 56);
+}
