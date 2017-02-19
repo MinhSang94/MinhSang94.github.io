@@ -1,0 +1,79 @@
+@media screen and (max-width: 644px) {
+	.float {
+		float: none !important;
+		margin: 0px auto !important;
+	}
+	.container {
+		width: 100% !important;
+		min-width: 50% !important;
+		float: none;
+	}
+	.header {
+		width: 100%;
+		text-align: center !important;
+		clear: both;
+		margin-top: 10px;
+		float: none;
+	}
+	.banner {
+		display: none;
+	}
+	.inner {
+		width: 98% !important;
+		min-width: 50% !important;
+		margin: 0px auto !important;
+		padding: 0 1% !important;
+		float: none;
+	}
+	.middle_content {
+		margin: 10px auto !important;
+	}
+	.aside {
+
+	clear: both;
+	}
+	.header_info {
+		text-align: center !important;
+	}
+	.footer {
+		width: 100%;
+		text-align: center !important;
+	}
+	.footer_box_1 {
+		clear: both;
+		display: block;
+	}
+	.footer_box_2 {
+		margin: 10px auto !important;
+		height: auto;
+		clear: both;
+	}
+	.footer_box_3 {
+		display: block !important;
+		clear: both;
+	}
+	.index dt {
+		display: block !important;
+		padding-top: 5px;
+	}
+	.index dd {
+		width: auto;
+		display: block;
+		margin: 0px 0px 15px 0px !important;
+		padding: 10px 0px 10px 20px !important;
+		clear: both;
+	}
+}
+@media screen and (min-width: 644px) and (max-width: 980px){
+	.header, .footer, .nav, .banner {
+		width: 100%;
+		min-width: 980px !important;
+		max-width: 980px !important;
+	}
+	.inner {
+		margin: 0px 10px !important;
+	}
+	.menu {
+		margin: 0px 3.5px !important;
+	}
+}
