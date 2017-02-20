@@ -34,7 +34,7 @@
 	function findString($strFind, $strSource)
 	{
 		$temp = strpos($strSource, $strFind);
-		if ($temp == false) {
+		if ($temp === false) {
 			return false;
 			echo $strFind;
 		} else {
