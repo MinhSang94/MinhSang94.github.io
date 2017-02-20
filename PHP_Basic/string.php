@@ -33,9 +33,10 @@
 	*/
 	function findString($strFind, $strSource)
 	{
-		$temp = strpos($strFind, $strSource);
-		if (empty($temp) && $temp !=0) {
+		$temp = strpos($strSource, $strFind);
+		if ($temp === false) {
 			return false;
+			echo $strFind;
 		} else {
 			return true;
 		}
@@ -79,13 +80,13 @@
 		$str2 = "DOMINH";
 		$str3 = "DOMINH";
 		$trim = 'trim';
-		echo "String str1 ".$str1."<br/>";
-		echo "String str2 ".$str2."<br/>";
-		echo "String str3 ".$str3."<br/>";
-		echo "String trim ".$str3."<br/>";
+		echo "String str1: ".$str1."<br/>";
+		echo "String str2: ".$str2."<br/>";
+		echo "String str3: ".$str3."<br/>";
+		echo "String trim: ".$str3."<br/>";
 		writeBySingleQuote();
 		writeByDoubleQuotes();
-		if (findString($str1, $str2)) {
+		if (findString($str2, $str3)) {
 			echo "Ex2: str1 FOUND in $str3"."<br/>";
 		} else {
 			echo "Ex2: str1 NOT FOUND $str3"."<br/>";
