@@ -36,7 +36,6 @@
 		$temp = strpos($strSource, $strFind);
 		if ($temp === false) {
 			return false;
-			echo $strFind;
 		} else {
 			return true;
 		}
