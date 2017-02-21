@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>JavaSript Exercise 1</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<div class="main">
+		<div>
+			<div class="slideDisplay">
+				<div class="slide" id="slide">
+					<img class="slideBox" src="images/1.jpg" alt=""/>
+					<img class="slideBox" src="images/2.jpg" alt=""/>
+					<img class="slideBox" src="images/3.jpg" alt=""/>
+					<img class="slideBox" src="images/4.jpg" alt=""/>
+				</div>
+			</div>
+			<div id="prev"></div>
+			<div id="next"></div>
+		</div>
+		<div class="quickChoose">
+			<img class="quickChoose__img" src="images/1.jpg" alt="" id="slide1" />
+			<img class="quickChoose__img" src="images/2.jpg" alt="" id="slide2" />
+			<img class="quickChoose__img" src="images/3.jpg" alt="" id="slide3"/>
+			<img class="quickChoose__img" src="images/4.jpg" alt="" id="slide4"/>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var numOfSlide = $(".slideBox").length;
+			var currentSlide = 0;
+			var interval;
+			setBorder();
+			interval = setInterval(nextSlide, 3000);
+			function validateCurrentSlide(numSlide) {
+				if (numSlide >= numOfSlide) {
+					numSlide = 0;
+				} else if (numSlide < 0) {
+					numSlide = numOfSlide - 1;
+				}
+				return numSlide;
+			}
+			function clearBorder(numSlide) {
+				$('.quickChoose__img').eq(numSlide).css('border', 'none');
+			}
+			function setBorder(numSlide) {
+				$('.quickChoose__img').eq(numSlide).css('border', '1px solid #999999');
+			}
+			function nextSlide() {
+				clearBorder(currentSlide);
+				$('.slideBox').eq(currentSlide).fadeOut('slow');
+				currentSlide = validateCurrentSlide(currentSlide + 1);
+				$('.slideBox').eq(currentSlide).fadeIn('slow');
+				setBorder(currentSlide);
+			}
+			function prevSlide() {
+				clearBorder(currentSlide);
+				$('.slideBox').eq(currentSlide).fadeOut('slow');
+				currentSlide = validateCurrentSlide(currentSlide - 1);
+				$('.slideBox').eq(currentSlide).fadeIn('slow');
+				setBorder(currentSlide);
+			}
+			$('#prev').click(function() {
+				clearInterval(interval);
+				prevSlide();
+				interval = setInterval(nextSlide, 3000);
+			});
+			$('#next').click(function() {
+				clearInterval(interval);
+				nextSlide();
+				interval = setInterval(nextSlide, 3000);
+			});
+			$('#slide1').click(function() {
+				clearInterval(interval);
+				clearBorder(currentSlide);
+				$('.slideBox').eq(currentSlide).fadeOut('slow');
+				currentSlide = 0;
+				$('.slideBox').eq(currentSlide).fadeIn('slow');
+				setBorder(currentSlide);
+				interval = setInterval(nextSlide, 3000);
+			});
+			$('#slide2').click(function() {
+				clearInterval(interval);
+				clearBorder(currentSlide);
+				$('.slideBox').eq(currentSlide).fadeOut('slow');
+				currentSlide = 1;
+				$('.slideBox').eq(currentSlide).fadeIn('slow');
+				setBorder(currentSlide);
+				interval = setInterval(nextSlide, 3000);
+			});
+			$('#slide3').click(function() {
+				clearInterval(interval);
+				clearBorder(currentSlide);
+				$('.slideBox').eq(currentSlide).fadeOut('slow');
+				currentSlide = 2;
+				$('.slideBox').eq(currentSlide).fadeIn('slow');
+				setBorder(currentSlide);
+				interval = setInterval(nextSlide, 3000);
+			});
+			$('#slide4').click(function() {
+				clearInterval(interval);
+				clearBorder(currentSlide);
+				$('.slideBox').eq(currentSlide).fadeOut('slow');
+				currentSlide = 3;
+				$('.slideBox').eq(currentSlide).fadeIn('slow');
+				setBorder(currentSlide);
+				interval = setInterval(nextSlide, 3000);
+			});
+		});
+	</script>
+</body>
+</html>
