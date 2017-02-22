@@ -11,7 +11,7 @@
 				'defaultAction' => 'index',
 				'defaultTemplate' => 'main',
 				'db' => array(
-							'connectionString' => 'mysql:host=localhost;dbname=dbname;charset=utf8',
+							'connectionString' => 'mysql:host=localhost;dbname=demo_sql;charset=utf8',
 							'emulatePrepare' =>true,
 							'username' => 'root',
 							'password' => '',
