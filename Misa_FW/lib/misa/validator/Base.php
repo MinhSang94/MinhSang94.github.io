@@ -16,9 +16,9 @@
 			$this->config = $config;	
 		}
 
-		public function beforValidator()
+		public function beforeValidator()
 		{
-			if (isset($this->config) && $this->config['allowEmpty'] && trim($this->value) != '') {
+			if (isset($this->config['allowEmpty']) && $this->config['allowEmpty'] && trim($this->value) != '') {
 				return true;
 			}
 			return false;
@@ -27,9 +27,9 @@
 		public function setError($error)
 		{
 			if (isset($this->config['message'])) {
-				$this->error[$this->attr] = $message = str_replace('{attr}', $this->config['label'], $this->config['message'])
+				$this->error[$this->attr] = $message = str_replace('{attr}', $this->config['label'], $this->config['message']);
 			} else {
-				$this->error[$this->attr] = $error;
+				$this->errors[$this->attr] = $error;
 			}
 		}
 	}

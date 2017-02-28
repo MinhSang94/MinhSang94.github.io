@@ -1,9 +1,9 @@
 <?php
-	require_once(dirname(__FILE__) . '\Base.php');
+	require_once(dirname(__FILE__) . '\controller\Base.php');
 	/**
 	* 
 	*/
-	class Misa extends MisaBase
+	class Misa extends MisaControllerBase
 	{
 		
 		function __construct()

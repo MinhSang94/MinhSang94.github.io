@@ -2,7 +2,7 @@
 	/**
 	* 
 	*/
-	class MisaModel extends MisaDatabase
+	class MisaModel extends MisaModelDatabase
 	{
 		public $scenario;
 		private $tableAlias;
@@ -55,5 +55,44 @@
 					$this->$key = trim($value);
 				}
 			}
+		}
+
+		public function validate()
+		{
+			$this->errors = array();
+			if (count($this->rules) > 0) {
+				foreach ($this->rules as $rule) {
+					$attrs = explode(',', array_shift($rule));
+					$validators = explode(',', array_shift($rule));
+					$skipError = isset($rule['allowEmpty']) ? true : false;
+					if (isset($rule['on'])) {
+						if ($this->scenario != $rule['on']) {
+							continue;
+						} else  {
+							$skipError = true;
+						}
+					}
+					foreach ($validators as $validator) {
+						$validator = 'MisaValidator'.ucfirst(trim($validator));
+						if (class_exists($validator, true)) {
+							foreach ($attrs as $attr) {
+								$attr = trim($attr);
+								if ($skipError) {
+									unset($this->errors[$attr]);
+								}
+								$rule['label'] = $this->getLabel($attr);
+								$validator = new $validator($attr, $this->$attr, $rule);
+								if (!$validator->beforeValidator()) {
+									$validator->validate();
+								}
+								$this->errors = array_merge($this->errors, $validator->errors);
+							}
+						} else {
+							$this->errors['validator'][] = 'No exists validator type with name "'. $method .'"';
+						}
+					}
+				}
+			}
+			return count($this->errors) == 0 ? true : false;
 		}
 	}

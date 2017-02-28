@@ -11,11 +11,15 @@
 				'defaultAction' => 'index',
 				'defaultTemplate' => 'main',
 				'db' => array(
-							'connectionString' => 'mysql:host=localhost;dbname=demo_sql;charset=utf8',
+							'connectionString' => 'mysql:host=localhost;dbname=ms_demo_fw;charset=utf8',
 							'emulatePrepare' =>true,
 							'username' => 'root',
 							'password' => '',
 							'charset' => 'utf8'
+						),
+				'smarty' =>array(
+							'debugging' =>false,
+							'caching' => false,
 						),
 				'routers' => array('tin-tuc' => 'news'),
 				'recordPerPage' =>20
