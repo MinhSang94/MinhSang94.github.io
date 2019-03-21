@@ -126,10 +126,10 @@
             "position": {
                 "click": 4,
                 "ball": {
-                    x: 35,
+                    x: 40,
                     y: 95,
-                    x_over: 10,
-                    y_over: 120
+                    x_over: 0,
+                    y_over: 75
                 }
             },
             "background": "0xFFFFFF",
@@ -149,7 +149,7 @@
                 "click": 5,
                 "ball": {
                     x: 110,
-                    y: 160
+                    y: 95
                 }
             },
             "background": "0x000000",
@@ -169,9 +169,9 @@
                 "click": 6,
                 "ball": {
                     x: 180,
-                    y: 85,
+                    y: 95,
                     x_over: 210,
-                    y_over: 95
+                    y_over: 75
                 }
             },
             "background": "0xFFFFFF",
@@ -228,7 +228,7 @@
         gameScene.removeChildren();
     }
 
-    setup();
+    waitingMatch();
 
     function setup() {
         // Create background
@@ -271,19 +271,17 @@
         // Create score
         scoreContainer = addGraphic(0x000000, 0.4, 0, 0, 240, 30);
         scoreTitle = addText('SCORE', {
-            fontWeight: 'bold',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
-            strokeThickness: 2,
+            strokeThickness: 5,
         }, 10, 2, scoreContainer);
 
         let scoreNumber = addText(score, {
-            fontWeight: 'bold',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 5
         }, 200, 2);
 
         // Create character name
@@ -407,12 +405,12 @@
         addImage('images/share/background_top.png');
         gameScene.addChild(scoreContainer);
         gameScene.addChild(scoreTitle);
+
         addText(score, {
-            fontWeight: 'bold',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 5
         }, 200, 2);
 
         let loseImg = addImage('images/share/youlose.png', -193, 75);
@@ -469,12 +467,12 @@
             addImage('images/share/background_top.png');
             gameScene.addChild(scoreContainer);
             gameScene.addChild(scoreTitle);
+
             addText(score, {
-                fontWeight: 'bold',
                 fontSize: 20,
                 fill: '#FFFFFF',
                 stroke: '#000000',
-                strokeThickness: 2
+                strokeThickness: 5
             }, 200, 2);
 
             let winImg = addImage('images/share/youwin.png', -193, 75);
@@ -540,14 +538,14 @@
         playerGameBoardText = addText(playerScore, {
             fontWeight: 'bold',
             fontSize: 15,
-            fill: '#000000'
+            fill: '#FF0000'
         }, 218, 202);
 
         gameScene.removeChild(cpuGameBoardText);
         cpuGameBoardText = addText(cpuScore, {
             fontWeight: 'bold',
             fontSize: 15,
-            fill: '#000000'
+            fill: '#FF0000'
         }, 218, 219);
     }
 
@@ -622,8 +620,11 @@
         app.ticker.add(moveGoalImg);
     }
 
-    function renderGk(turn, gk, gkPlace, stPlace, goal) {
+    function renderGk(turn, gk, gkPlace, stPlace, goal, ball) {
         let newGkImg;
+        if (stPlace === gkPlace && goal) {
+            gameScene.removeChild(ball);
+        }
         switch (gkPlace) {
             case 1: {
                 newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_up.png');
@@ -646,7 +647,7 @@
             case 4: {
                 newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_down.png');
                 gk.setTexture(newGkImg);
-                setPosition(gk, 40, 105);
+                setPosition(gk, 30, 105);
                 break;
             }
             case 5: {
@@ -658,14 +659,14 @@
             case 6: {
                 newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_right_down.png');
                 gk.setTexture(newGkImg);
-                setPosition(gk, 115, 105);
+                setPosition(gk, 135, 105);
                 break;
             }
         }
 
         addGraphic(0x000000, 0.5, 0, 0, 240, 240);
         setTimeout(function () {
-            if (stPlace === gkPlace || !goal) {
+            if (stPlace === gkPlace && !goal) {
                 renderMiss();
             } else {
                 renderGoal();
@@ -702,9 +703,7 @@
                 });
 
                 if (playerTurn === cpuTurn
-                    && ((playerTurn < 5 && subScore > (5 - playerTurn))
-                        || (playerTurn === 5 && subScore > 0)
-                        || (playerTurn > 5 && subScore > 0))
+                    && ((playerTurn < 5 && subScore > (5 - playerTurn)) || (playerTurn >= 5 && subScore > 0))
                 ) {
                     nextStage = false;
                 }
@@ -742,12 +741,12 @@
         scoreTitle.alpha = 1;
         gameScene.addChild(scoreContainer);
         gameScene.addChild(scoreTitle);
+
         addText(score, {
-            fontWeight: 'bold',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 5
         }, 200, 2);
 
         Object.keys(playPlace).forEach(function (index) {
@@ -801,21 +800,21 @@
                         } else if (moveTo === 3 && ball.x < moveToX && ball.y > moveToY) {
                             ball.x += 13;
                             ball.y -= 25;
-                        } else if (moveTo === 4 && ball.x > moveToX && ball.y > moveToX) {
-                            ball.x -= 5;
-                            ball.y -= 6.8;
-                        } else if (moveTo = 5 && ball.x < moveToX && ball.y > moveToX) {
+                        } else if (moveTo === 4 && ball.x > moveToX && ball.y > moveToY) {
+                            ball.x -= 10;
+                            ball.y -= 14;
+                        } else if (moveTo === 5 && ball.x < moveToX && ball.y > moveToY) {
                             ball.x += 2;
                             ball.y -= 16;
-                        } else if (moveTo = 6 && ball.x < moveToX && ball.y > moveToY) {
+                        } else if (moveTo === 6 && ball.x < moveToX && ball.y > moveToY) {
                             ball.x += 10;
-                            ball.y -= 8;
+                            ball.y -= 10;
                         } else {
                             app.ticker.remove(moveBall);
                             if (gameTurn === PLAYER_TURN) {
-                                renderGk('cpu', gk, randCpuPlace(), playPlace[index].position.click, goal);
+                                renderGk('cpu', gk, randCpuPlace(), playPlace[index].position.click, goal, ball);
                             } else {
-                                renderGk('player', gk, playPlace[index].position.click, randCpuPlace(), goal);
+                                renderGk('player', gk, playPlace[index].position.click, moveTo, goal, ball);
                             }
                         }
                     };
