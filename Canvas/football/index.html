@@ -351,7 +351,6 @@
                 vsContainer.graphicsData[0].shape.height += 20;
                 vsContainer.y -= 15;
             }
-
         };
 
         let fadeIn = true;
@@ -495,7 +494,7 @@
                             }
                         };
                         app.ticker.add(moveStageImg);
-                    }, 500);
+                    }, 1000);
                 }
             };
             app.ticker.add(moveWinImg);
@@ -505,11 +504,11 @@
     }
 
     function renderScoreBoard(isGoal) {
-        if (playerGameBoard !== null) {
+        if (playerGameBoard !== null && gameTurn === CPU_TURN) {
             gameScene.addChild(playerGameBoard);
         }
 
-        if (cpuGameBoard !== null) {
+        if (cpuGameBoard !== null && gameTurn === PLAYER_TURN) {
             gameScene.addChild(cpuGameBoard);
         }
 
@@ -532,7 +531,7 @@
         }
 
         gameScene.removeChild(gameBoarTurn);
-        gameBoarTurn = addText(playerTurn + 1, {
+        gameBoarTurn = addText(playerTurn === cpuTurn ? playerTurn + 1 : playerTurn, {
             fontSize: 11,
             fill: '#000000'
         }, 185, 190);
@@ -647,7 +646,7 @@
             case 4: {
                 newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_down.png');
                 gk.setTexture(newGkImg);
-                setPosition(gk, 30, 105);
+                setPosition(gk, 40, 105);
                 break;
             }
             case 5: {
@@ -659,7 +658,7 @@
             case 6: {
                 newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_right_down.png');
                 gk.setTexture(newGkImg);
-                setPosition(gk, 135, 105);
+                setPosition(gk, 115, 105);
                 break;
             }
         }
