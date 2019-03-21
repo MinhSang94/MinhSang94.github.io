@@ -7,23 +7,22 @@
 </head>
 <body>
 <style>
-	canvas {
-	    display: block;
-	    margin: 0 auto;
-	}
+    canvas {
+        display: block;
+        margin: 0 auto;
+    }
 </style>
 <script src="../pixi/pixi.min.js"></script>
 <script>
+    const CPU_TURN = 'cpu';
+    const PLAYER_TURN = 'player';
+    const POINTER_TAP = 'pointertap';
+
     let Application = PIXI.Application;
     let Container = PIXI.Container;
-    let loader = PIXI.loader;
-    let resources = PIXI.loader.resources;
     let Graphics = PIXI.Graphics;
-    let TextureCache = PIXI.utils.TextureCache;
     let Sprite = PIXI.Sprite;
     let Text = PIXI.Text;
-    let TextStyle = PIXI.TextStyle;
-    let Texture = PIXI.Texture;
 
     let background, player, cpu, scoreContainer, scoreTitle;
     let alpha = 0;
@@ -40,23 +39,24 @@
     let playerScore = 0;
     let playerGameBoard = null;
     let playerGameBoardText = null;
-    let gameTurn = 'player';
+    let gameTurn = PLAYER_TURN;
     let gameBoarTurn = null;
+    let gamePlace = [];
+    let gamePlaceText = [];
+
 
     let app = new Application({
         width: 240,
         height: 240,
         antialias: true
     });
-    let appWidth = app.screen.width;
-    let appHeight = app.screen.height;
     document.body.appendChild(app.view);
 
     let gameScene = new Container();
     app.stage.addChild(gameScene);
 
     let playPlace = {
-        "place_1":{
+        "place_1": {
             "position": {
                 "click": 1,
                 "ball": {
@@ -66,19 +66,19 @@
                     y_over: -11
                 }
             },
-            "background":"0x000000",
-            "opacity":0.2,
-            "width":58,
-            "height":48,
-            "x":33,
-            "y":44,
+            "background": "0x000000",
+            "opacity": 0.2,
+            "width": 58,
+            "height": 48,
+            "x": 33,
+            "y": 44,
             "title": {
                 text: '1',
                 x: 55,
                 y: 55
             }
         },
-        "place_2":{
+        "place_2": {
             "position": {
                 "click": 2,
                 "ball": {
@@ -88,19 +88,19 @@
                     y_over: -10
                 }
             },
-            "background":"0xFFFFFF",
-            "opacity":0.2,
-            "width":58,
-            "height":48,
-            "x":91,
-            "y":44,
+            "background": "0xFFFFFF",
+            "opacity": 0.2,
+            "width": 58,
+            "height": 48,
+            "x": 91,
+            "y": 44,
             "title": {
                 text: '2',
                 x: 112,
                 y: 55
             }
         },
-        "place_3":{
+        "place_3": {
             "position": {
                 "click": 3,
                 "ball": {
@@ -110,63 +110,61 @@
                     y_over: -10
                 }
             },
-            "background":"0x000000",
-            "opacity":0.2,
-            "width":58,
-            "height":48,
-            "x":149,
-            "y":44,
+            "background": "0x000000",
+            "opacity": 0.2,
+            "width": 58,
+            "height": 48,
+            "x": 149,
+            "y": 44,
             "title": {
                 text: '3',
                 x: 170,
                 y: 55
             }
         },
-        "place_4":{
+        "place_4": {
             "position": {
                 "click": 4,
                 "ball": {
                     x: 35,
                     y: 95,
-                    x_over: 20,
-                    y_over: 80
+                    x_over: 10,
+                    y_over: 120
                 }
             },
-            "background":"0xFFFFFF",
-            "opacity":0.2,
-            "width":58,
-            "height":48,
-            "x":33,
-            "y":92,
+            "background": "0xFFFFFF",
+            "opacity": 0.2,
+            "width": 58,
+            "height": 48,
+            "x": 33,
+            "y": 92,
             "title": {
                 text: '4',
                 x: 55,
                 y: 102
             }
         },
-        "place_5":{
+        "place_5": {
             "position": {
                 "click": 5,
                 "ball": {
                     x: 110,
-                    y: 160,
-                    x_over: -11,
-                    y_over: -11
+                    y: 160
                 }
             },
-            "background":"0x000000",
-            "opacity":0.2,
-            "width":58,
-            "height":48,
-            "x":91,
-            "y":92,
+            "background": "0x000000",
+            "opacity": 0.2,
+            "width": 58,
+            "height": 48,
+            "x": 91,
+            "y": 92,
             "title": {
                 text: '5',
                 x: 112,
                 y: 102
             }
         },
-        "place_6":{
+        "place_6": {
             "position": {
                 "click": 6,
                 "ball": {
@@ -176,12 +174,12 @@
                     y_over: 95
                 }
             },
-            "background":"0xFFFFFF",
-            "opacity":0.2,
-            "width":58,
-            "height":48,
-            "x":149,
-            "y":92,
+            "background": "0xFFFFFF",
+            "opacity": 0.2,
+            "width": 58,
+            "height": 48,
+            "x": 149,
+            "y": 92,
             "title": {
                 text: '6',
                 x: 170,
@@ -190,16 +188,20 @@
         }
     };
 
-    function addText(text, options, x, y, parent = gameScene){
+    function setPosition(elm, x, y) {
+        elm.x = x;
+        elm.y = y;
+    }
+
+    function addText(text, options, x, y, parent = gameScene) {
         let element = new Text(text, options);
-        element.x = x;
-        element.y = y;
+        setPosition(element, x, y);
         parent.addChild(element);
 
         return element;
     }
 
-    function addGraphic(color, opacity, x, y, width, height, parent = gameScene){
+    function addGraphic(color, opacity, x, y, width, height, parent = gameScene) {
         let element = new Graphics();
         element.beginFill(color, opacity);
         element.drawRect(x, y, width, height);
@@ -211,8 +213,7 @@
 
     function addImage(url, x = 0, y = 0, opacity = 1, parent = gameScene) {
         let element = Sprite.fromImage(url);
-        element.x = x;
-        element.y = y;
+        setPosition(element, x, y);
 
         if (opacity !== 1) {
             element.alpha = opacity;
@@ -228,20 +229,13 @@
     }
 
     setup();
+
     function setup() {
         // Create background
         background = addImage('images/share/title_background.jpg');
         // Create start button + animation
         addGraphic(0x000000, 0.75, 0, 180, 240, 49);
-        let beginBtn = addText('Press here to begin!', {
-            fontWeight: 'bold',
-            fontSize: 15,
-            fontFamily: 'Arial',
-            fill: '#cc00ff',
-            align: 'center',
-            stroke: '#FFFFFF',
-            strokeThickness: 6
-        }, 40, 190);
+        let beginBtn = addImage('images/share/start_label.png', 40, 190, 0);
         beginBtn.buttonMode = true;
         beginBtn.interactive = true;
 
@@ -250,7 +244,7 @@
             alpha = alpha < 1 ? alpha + 0.015 : 0;
         };
 
-        beginBtn.on('pointertap', function () {
+        beginBtn.on(POINTER_TAP, function () {
             app.ticker.remove(showButton);
             waitingMatch();
         });
@@ -258,8 +252,7 @@
         app.ticker.add(showButton);
     }
 
-    function waitingMatch() {
-        clear();
+    function resetNextStage() {
         round += 1;
         cpuTurn = 0;
         playerTurn = 0;
@@ -267,6 +260,11 @@
         playerScore = 0;
         cpuGameBoard = null;
         playerGameBoard = null;
+    }
+
+    function waitingMatch() {
+        clear();
+        resetNextStage();
         // Create main background
         background = addImage('images/share/main_background.jpg');
         addGraphic(0xFFFFFF, 0.5, 0, 0, 240, 240);
@@ -302,68 +300,68 @@
         }, 203, 55);
 
         // Create vs
-        let vsContainer = addGraphic(0x000000, 0, 164, 240, 0);
-        let vsImg = addImage('images/share/vs.png', 90, 180, 0, vsContainer);
+        let vsContainer = addGraphic(0x000000, 1, 0, 164, 240, 0);
+        let vsImg = addImage('images/share/vs.png', 90, 144, 0);
         vsImg.width = 67;
         vsImg.height = 41;
         // Create player
         player = addImage('images/share/vs_player.png', -78, 68);
-
         // Create cpu
         cpu = addImage('images/share/vs_cpu.png', 240, 81);
-        let fadeIn = true;
-        alpha = 1;
         let fadeOutElm = function () {
-            if (player.x >= -90 || cpu.x < appWidth) {
+            if (player.x >= -90 || cpu.x < 240) {
                 player.x -= 3;
                 cpu.x += 3;
             }
+
             if (vsContainer.alpha > 0) {
                 vsContainer.alpha -= 0.02;
             } else {
                 app.ticker.remove(fadeOutElm);
                 renderPlay();
             }
-            if (nameContainer.alpha > 0) {
-                nameContainer.alpha -= 0.015;
-                playerName.alpha -= 0.02;
-                cpuName.alpha -= 0.02;
-            } else {
-                playerName.alpha = 0;
-                cpuName.alpha = 0;
-            }
-            if (scoreContainer.alpha > 0) {
-                scoreContainer.alpha -= 0.015;
+
+            if (nameContainer.alpha > 0 || scoreContainer.alpha > 0) {
+                nameContainer.alpha -= 0.02;
+                playerName.alpha -= 0.025;
+                cpuName.alpha -= 0.025;
+
+                scoreContainer.alpha -= 0.02;
                 scoreTitle.alpha -= 0.02;
                 scoreNumber.alpha -= 0.02;
             } else {
+                playerName.alpha = 0;
+                cpuName.alpha = 0;
+
                 scoreTitle.alpha = 0;
                 scoreNumber.alpha = 0;
             }
-            if (vsContainer.graphicsData[0].shape.width > 10) {
-                vsContainer.graphicsData[0].shape.width -= 46;
-                vsContainer.x += 23;
+
+            if (vsContainer.graphicsData[0].shape.width > 8) {
+                vsContainer.graphicsData[0].shape.width -= 8;
+                vsContainer.x += 4;
+                vsImg.width += 6;
+                vsImg.x -= 3;
+                vsImg.height -= 4.1;
+            } else {
+                vsImg.alpha = 0;
             }
+
             if (vsContainer.graphicsData[0].shape.height < 240) {
                 vsContainer.graphicsData[0].shape.height += 20;
                 vsContainer.y -= 15;
             }
-            if (vsImg.height > 2) {
-                vsImg.width += 6;
-                vsImg.x -=3;
-                vsImg.height -= 4.1;
-                vsImg.y += 2;
-            } else {
-                vsImg.alpha = 0;
-            }
+
         };
+
+        let fadeIn = true;
         let fadeInElm = function () {
             if (player.x < 0) {
-                player.x += 3;
+                player.x += 2;
             }
 
-            if (cpu.x > (appWidth - 78)) {
-                cpu.x -= 3;
+            if (cpu.x > 162) {
+                cpu.x -= 2;
             }
 
             if (vsContainer.graphicsData[0].shape.height < 50) {
@@ -371,9 +369,9 @@
                 vsContainer.graphicsData[0].shape.height += 2.5;
                 vsImg.alpha = 1;
                 vsImg.width += 2;
-                vsImg.x -=1;
-                vsImg.height +=2;
-                vsImg.y -=1;
+                vsImg.x -= 1;
+                vsImg.height += 2;
+                vsImg.y -= 1;
             }
 
             if (vsContainer.graphicsData[0].shape.height === 50 && vsImg.width >= 67 && vsImg.height > 40) {
@@ -383,13 +381,15 @@
                 vsImg.y += 1;
                 fadeIn = false;
             }
+
             if (vsContainer.graphicsData[0].shape.height === 50 && vsImg.width < 67 && vsImg.height < 41) {
                 app.ticker.remove(fadeInElm);
-                setTimeout(function(){
+                setTimeout(function () {
                     app.ticker.add(fadeOutElm);
                 }, 300);
             }
         };
+
         app.ticker.add(fadeInElm);
     }
 
@@ -447,7 +447,7 @@
                                     continueImg.alpha = alpha;
                                     alpha = alpha < 1 ? alpha + 0.015 : 0;
                                 };
-                                continueImg.on('pointertap', function () {
+                                continueImg.on(POINTER_TAP, function () {
                                     app.ticker.remove(continueChangeAlpha);
                                     setup();
                                 });
@@ -504,26 +504,47 @@
         }
     }
 
-    function renderScoreBoard() {
-        if (gameBoarTurn !== null) {
-            gameScene.removeChild(gameBoarTurn);
+    function renderScoreBoard(isGoal) {
+        if (playerGameBoard !== null) {
+            gameScene.addChild(playerGameBoard);
         }
+
+        if (cpuGameBoard !== null) {
+            gameScene.addChild(cpuGameBoard);
+        }
+
+        if (playerTurn === cpuTurn) {
+            gameScene.removeChild(playerGameBoard);
+            gameScene.removeChild(cpuGameBoard);
+        }
+
+        if (isGoal !== null) {
+            let ico = isGoal ? 'images/share/o.png' : 'images/share/x.png';
+            if (gameTurn === 'player') {
+                playerGameBoard = addImage(ico, 188, 204);
+                playerGameBoard.width = 14;
+                playerGameBoard.height = 14;
+            } else {
+                cpuGameBoard = addImage(ico, 188, 221);
+                cpuGameBoard.width = 14;
+                cpuGameBoard.height = 14;
+            }
+        }
+
+        gameScene.removeChild(gameBoarTurn);
         gameBoarTurn = addText(playerTurn + 1, {
             fontSize: 11,
             fill: '#000000'
         }, 185, 190);
-        if (playerGameBoardText !== null) {
-            gameScene.removeChild(playerGameBoardText);
-        }
+
+        gameScene.removeChild(playerGameBoardText);
         playerGameBoardText = addText(playerScore, {
             fontWeight: 'bold',
             fontSize: 15,
             fill: '#000000'
         }, 218, 202);
 
-        if (cpuGameBoardText !== null) {
-            gameScene.removeChild(cpuGameBoardText);
-        }
+        gameScene.removeChild(cpuGameBoardText);
         cpuGameBoardText = addText(cpuScore, {
             fontWeight: 'bold',
             fontSize: 15,
@@ -532,15 +553,30 @@
     }
 
     function renderMiss() {
-        renderScoreBoard();
+        renderScoreBoard(false);
         let missImg = addImage('images/share/miss.png', 40, 50);
-        if (gameTurn === 'player') {
-            if (playerGameBoard !== null) {
-                gameScene.removeChild(playerGameBoard);
+        let swap = false;
+        let moveMissImg = function () {
+            if (missImg.x < 50 && !swap) {
+                setPosition(missImg, missImg.x + 1, missImg.y + 1);
+            } else {
+                swap = true;
             }
-            playerGameBoard = addImage('images/share/x.png', 188, 204);
-            playerGameBoard.width = 14;
-            playerGameBoard.height = 14;
+
+            if (missImg.x > 40 && swap) {
+                setPosition(missImg, missImg.x - 1, missImg.y + 1);
+            } else {
+                swap = false;
+            }
+
+            if (missImg.y >= 80) {
+                app.ticker.remove(moveMissImg);
+            }
+        };
+
+        app.ticker.add(moveMissImg);
+
+        if (gameTurn === 'player') {
             let playerMiss = addImage('images/player/miss_player.png', -98, 134);
             let movePlayer = function () {
                 if (playerMiss.x < 10) {
@@ -550,19 +586,10 @@
                 }
             };
             app.ticker.add(movePlayer);
-        } else {
-            if (cpuGameBoard !== null) {
-                gameScene.removeChild(cpuGameBoard);
-            }
-            cpuGameBoard = addImage('images/share/x.png', 188, 221);
-            cpuGameBoard.width = 14;
-            cpuGameBoard.height = 14;
         }
     }
 
     function renderGoal() {
-        renderScoreBoard();
-        let goalImg = addImage('images/share/goal.png', 40, 50);
         if (gameTurn === 'player') {
             playerScore += 1;
             score += round * 100;
@@ -570,65 +597,69 @@
             cpuScore += 1;
         }
 
+        renderScoreBoard(true);
+
         if (gameTurn === 'player') {
-            if (playerGameBoard !== null) {
-                gameScene.removeChild(playerGameBoard);
-            }
-            playerGameBoard = addImage('images/share/o.png', 188, 204);
-            playerGameBoard.width = 14;
-            playerGameBoard.height = 14;
-            let playerMiss = addImage('images/player/goal_player.png', 240, 84);
+            let playerMiss = addImage('images/player/goal_player.png', 100, 240);
             let movePlayer = function () {
-                if (playerMiss.x >100) {
-                    playerMiss.x -= 4;
+                if (playerMiss.y > 84) {
+                    playerMiss.y -= 10;
                 } else {
                     app.ticker.remove(movePlayer);
                 }
             };
             app.ticker.add(movePlayer);
-        } else {
-            if (cpuGameBoard !== null) {
-                gameScene.removeChild(cpuGameBoard);
-            }
-            cpuGameBoard = addImage('images/share/o.png', 188, 221);
-            cpuGameBoard.width = 14;
-            cpuGameBoard.height = 14;
         }
+
+        let goalImg = addImage('images/share/goal.png', -40, 50);
+        let moveGoalImg = function () {
+            if (goalImg.x < 40) {
+                goalImg.x += 2;
+            } else {
+                app.ticker.remove(moveGoalImg);
+            }
+        };
+
+        app.ticker.add(moveGoalImg);
     }
 
-
     function renderGk(turn, gk, gkPlace, stPlace, goal) {
-        gameScene.removeChild(gk);
         let newGkImg;
         switch (gkPlace) {
             case 1: {
-                newGkImg = 'images/' + turn + '/gk_left_up.png';
-                addImage(newGkImg, 30, 40);
+                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_up.png');
+                gk.setTexture(newGkImg);
+                setPosition(gk, 30, 40);
                 break;
             }
             case 2: {
-                newGkImg = 'images/' + turn + '/gk_center_up.png';
-                addImage(newGkImg, 100, 40);
+                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_center_up.png');
+                gk.setTexture(newGkImg);
+                setPosition(gk, 100, 40);
                 break;
             }
             case 3: {
-                newGkImg = 'images/' + turn + '/gk_right_up.png';
-                addImage(newGkImg, 135, 40);
+                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_right_up.png');
+                gk.setTexture(newGkImg);
+                setPosition(gk, 135, 40);
                 break;
             }
             case 4: {
-                newGkImg = 'images/' + turn + '/gk_left_down.png';
-                addImage(newGkImg, 30, 105);
+                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_down.png');
+                gk.setTexture(newGkImg);
+                setPosition(gk, 30, 105);
                 break;
             }
             case 5: {
-                newGkImg = 'images/' + turn + '/gk_center_down.png';
-                addImage(newGkImg, 100, 80);
+                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_center_down.png');
+                gk.setTexture(newGkImg);
+                setPosition(gk, 100, 80);
                 break;
             }
             case 6: {
-                newGkImg = 'images/' + turn + '/gk_right_down.png';
-                addImage(newGkImg, 135, 105);
+                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_right_down.png');
+                gk.setTexture(newGkImg);
+                setPosition(gk, 135, 105);
                 break;
             }
         }
@@ -651,12 +682,12 @@
                 let closeBg6 = addGraphic(0x000000, 1, 240, 200, 0, 40);
                 let subScore = Math.abs(playerScore - cpuScore);
 
-                if (gameTurn === 'player') {
-                    gameTurn = 'cpu';
+                if (gameTurn === PLAYER_TURN) {
+                    gameTurn = CPU_TURN;
                     playerTurn += 1;
                 } else {
+                    gameTurn = PLAYER_TURN;
                     cpuTurn += 1;
-                    gameTurn = 'player';
                 }
 
                 console.log({
@@ -704,7 +735,7 @@
         }, 300);
     }
 
-    function renderPlay(){
+    function renderPlay() {
         clear();
         background.alpha = 1;
         gameScene.addChild(background);
@@ -720,8 +751,8 @@
             strokeThickness: 2
         }, 200, 2);
 
-        Object.keys(playPlace).forEach(function(index){
-            let gamePlace = addGraphic(
+        Object.keys(playPlace).forEach(function (index) {
+            let position = addGraphic(
                 playPlace[index].background,
                 playPlace[index].opacity,
                 playPlace[index].x,
@@ -729,11 +760,21 @@
                 playPlace[index].width,
                 playPlace[index].height
             );
-            gamePlace.interactive = true;
-            gamePlace.buttonMode = true;
-            gamePlace.on('pointertap', function () {
+            position.interactive = true;
+            position.buttonMode = true;
+            position.on(POINTER_TAP, function () {
+                app.ticker.remove(moveGk);
+
+                gamePlace.forEach(function (item) {
+                    gameScene.removeChild(item);
+                });
+
+                gamePlaceText.forEach(function (item) {
+                    gameScene.removeChild(item);
+                });
+
                 let goal = randMissOrGoal();
-                if (gameTurn === 'player') {
+                if (gameTurn === PLAYER_TURN) {
                     moveTo = playPlace[index].position.click;
                     moveToX = !goal && moveTo !== 5 ? playPlace[index].position.ball.x_over : playPlace[index].position.ball.x;
                     moveToY = !goal && moveTo !== 5 ? playPlace[index].position.ball.y_over : playPlace[index].position.ball.y;
@@ -742,11 +783,12 @@
                     moveToX = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.x_over : playPlace['place_' + moveTo].position.ball.x;
                     moveToY = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.y_over : playPlace['place_' + moveTo].position.ball.y;
                 }
+
                 gameScene.removeChild(st);
-                st = addImage('images/' + gameTurn + '/kick_2.png', 60, 145);
+                st = addImage('images/' + gameTurn + '/kick_2.png', 64, 145);
                 setTimeout(function () {
                     gameScene.removeChild(st);
-                    st = addImage('images/' + gameTurn + '/kick_3.png', 80, 145);
+                    st = addImage('images/' + gameTurn + '/kick_3.png', 84, 145);
 
                     let moveBall = function () {
                         if (moveTo === 1 && ball.x > moveToX && ball.y > moveToY) {
@@ -758,7 +800,7 @@
                             }
                             ball.y -= 30;
                         } else if (moveTo === 3 && ball.x < moveToX && ball.y > moveToY) {
-                            ball.x += 10;
+                            ball.x += 13;
                             ball.y -= 25;
                         } else if (moveTo === 4 && ball.x > moveToX && ball.y > moveToX) {
                             ball.x -= 5;
@@ -771,42 +813,56 @@
                             ball.y -= 8;
                         } else {
                             app.ticker.remove(moveBall);
-                            let turn = gameTurn === 'player' ? 'cpu' : 'player';
-                            if (gameTurn === 'player') {
-                                renderGk(turn, gk, randCpuPlace(), playPlace[index].position.click, goal);
+                            if (gameTurn === PLAYER_TURN) {
+                                renderGk('cpu', gk, randCpuPlace(), playPlace[index].position.click, goal);
                             } else {
-                                renderGk(turn, gk, playPlace[index].position.click, randCpuPlace(), goal);
+                                renderGk('player', gk, playPlace[index].position.click, randCpuPlace(), goal);
                             }
                         }
                     };
                     app.ticker.add(moveBall);
                 }, 100);
             });
+
+            gamePlace.push(position);
         });
 
-        let gk = addImage(gameTurn === 'player' ? 'images/cpu/gk_def.png' : 'images/player/gk_def.png', 90, 70);
+        let gkSprite = PIXI.Texture.fromImage(gameTurn === PLAYER_TURN ? 'images/cpu/gk_def.png' : 'images/player/gk_def.png', 90, 70);
+        let gk = new PIXI.Sprite(gkSprite);
+        gameScene.addChild(gk);
+        setPosition(gk, 90, 70);
+        let swap = false;
+        let moveGk = function () {
+            if (gk.y < 73 && !swap) {
+                gk.y += 0.2;
+            } else {
+                swap = true;
+            }
+
+            if (gk.y > 70 && swap) {
+                gk.y -= 0.2;
+            } else {
+                swap = false;
+            }
+        };
+
+        app.ticker.add(moveGk);
         let st = addImage('images/' + gameTurn + '/kick_1.png', 60, 145);
         let ball = addImage('images/share/ball_1.png', 100, 195);
 
-        Object.keys(playPlace).forEach(function(index){
-            addText(playPlace[index].title.text, {
+        Object.keys(playPlace).forEach(function (index) {
+            let text = addText(playPlace[index].title.text, {
                 fontSize: 24,
                 fill: '#FFFFFF',
                 stroke: '#FF0000',
                 strokeThickness: 4
             }, playPlace[index].title.x, playPlace[index].title.y);
+
+            gamePlaceText.push(text);
         });
 
         addImage('images/share/score_board.png', 142, 188);
-        if (playerGameBoard !== null) {
-            gameScene.addChild(playerGameBoard);
-        }
-
-        if (cpuGameBoard !== null) {
-            gameScene.addChild(cpuGameBoard);
-        }
-
-        renderScoreBoard();
+        renderScoreBoard(null);
     }
 </script>
 </body>
