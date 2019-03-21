@@ -772,22 +772,22 @@
                     gameScene.removeChild(item);
                 });
 
-                let goal = randMissOrGoal();
-                if (gameTurn === PLAYER_TURN) {
-                    moveTo = playPlace[index].position.click;
-                    moveToX = !goal && moveTo !== 5 ? playPlace[index].position.ball.x_over : playPlace[index].position.ball.x;
-                    moveToY = !goal && moveTo !== 5 ? playPlace[index].position.ball.y_over : playPlace[index].position.ball.y;
-                } else {
-                    moveTo = randCpuPlace();
-                    moveToX = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.x_over : playPlace['place_' + moveTo].position.ball.x;
-                    moveToY = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.y_over : playPlace['place_' + moveTo].position.ball.y;
-                }
-
                 gameScene.removeChild(st);
                 st = addImage('images/' + gameTurn + '/kick_2.png', 64, 145);
                 setTimeout(function () {
                     gameScene.removeChild(st);
                     st = addImage('images/' + gameTurn + '/kick_3.png', 84, 145);
+
+                    let goal = randMissOrGoal();
+                    if (gameTurn === PLAYER_TURN) {
+                        moveTo = playPlace[index].position.click;
+                        moveToX = !goal && moveTo !== 5 ? playPlace[index].position.ball.x_over : playPlace[index].position.ball.x;
+                        moveToY = !goal && moveTo !== 5 ? playPlace[index].position.ball.y_over : playPlace[index].position.ball.y;
+                    } else {
+                        moveTo = randCpuPlace();
+                        moveToX = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.x_over : playPlace['place_' + moveTo].position.ball.x;
+                        moveToY = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.y_over : playPlace['place_' + moveTo].position.ball.y;
+                    }
 
                     let moveBall = function () {
                         if (moveTo === 1 && ball.x > moveToX && ball.y > moveToY) {
