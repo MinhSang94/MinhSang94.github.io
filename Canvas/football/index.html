@@ -43,7 +43,7 @@
     let gameBoarTurn = null;
     let gamePlace = [];
     let gamePlaceText = [];
-
+    let gkCharacter = new Array();
 
     let app = new Application({
         width: 240,
@@ -55,7 +55,7 @@
     let gameScene = new Container();
     app.stage.addChild(gameScene);
 
-    let playPlace = {
+    let tapPosition = {
         "place_1": {
             "position": {
                 "click": 1,
@@ -187,6 +187,20 @@
             }
         }
     };
+    let gkImg = {
+        cpu_1: {url: 'images/cpu/gk_left_up.png', x: 30, y: 40},
+        cpu_2: {url: 'images/cpu/gk_center_up.png', x: 100, y: 40},
+        cpu_3: {url: 'images/cpu/gk_right_up.png', x: 135, y: 40},
+        cpu_4: {url: 'images/cpu/gk_left_down.png', x: 30, y: 105},
+        cpu_5: {url: 'images/cpu/gk_center_down.png', x: 100, y: 80},
+        cpu_6: {url: 'images/cpu/gk_right_down.png', x: 135, y: 105},
+        player_1: {url: 'images/player/gk_left_up.png', x: 30, y: 40},
+        player_2: {url: 'images/player/gk_center_up.png', x: 100, y: 40},
+        player_3: {url: 'images/player/gk_right_up.png', x: 135, y: 40},
+        player_4: {url: 'images/player/gk_left_down.png', x: 30, y: 105},
+        player_5: {url: 'images/player/gk_center_down.png', x: 100, y: 80},
+        player_6: {url: 'images/player/gk_right_down.png', x: 135, y: 105},
+    };
 
     function setPosition(elm, x, y) {
         elm.x = x;
@@ -228,7 +242,7 @@
         gameScene.removeChildren();
     }
 
-    setup();
+    waitingMatch();
 
     function setup() {
         // Create background
@@ -248,7 +262,8 @@
             app.ticker.remove(showButton);
             waitingMatch();
         });
-
+        round = 0;
+        score = 0;
         app.ticker.add(showButton);
     }
 
@@ -620,53 +635,13 @@
         app.ticker.add(moveGoalImg);
     }
 
-    function renderGk(turn, gk, gkPlace, stPlace, goal, ball) {
-        let newGkImg;
-        if (stPlace === gkPlace && goal) {
-            gameScene.removeChild(ball);
-        }
-        switch (gkPlace) {
-            case 1: {
-                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_up.png');
-                gk.setTexture(newGkImg);
-                setPosition(gk, 30, 40);
-                break;
-            }
-            case 2: {
-                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_center_up.png');
-                gk.setTexture(newGkImg);
-                setPosition(gk, 100, 40);
-                break;
-            }
-            case 3: {
-                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_right_up.png');
-                gk.setTexture(newGkImg);
-                setPosition(gk, 135, 40);
-                break;
-            }
-            case 4: {
-                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_left_down.png');
-                gk.setTexture(newGkImg);
-                setPosition(gk, 30, 105);
-                break;
-            }
-            case 5: {
-                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_center_down.png');
-                gk.setTexture(newGkImg);
-                setPosition(gk, 100, 80);
-                break;
-            }
-            case 6: {
-                newGkImg = PIXI.Texture.fromImage('images/' + turn + '/gk_right_down.png');
-                gk.setTexture(newGkImg);
-                setPosition(gk, 135, 105);
-                break;
-            }
-        }
+    function renderGk(turn, gk, gkPlace, stPlace, goal) {
+        gameScene.removeChild(gk);
+        gkCharacter[turn + '_' + gkPlace].alpha = 1;
 
         addGraphic(0x000000, 0.5, 0, 0, 240, 240);
         setTimeout(function () {
-            if (stPlace === gkPlace && !goal) {
+            if (stPlace === gkPlace || (gkPlace !== 5 && !goal)) {
                 renderMiss();
             } else {
                 renderGoal();
@@ -749,14 +724,18 @@
             strokeThickness: 5
         }, 200, 2);
 
-        Object.keys(playPlace).forEach(function (index) {
+        Object.keys(gkImg).forEach(function (index) {
+            gkCharacter[index] = addImage(gkImg[index].url, gkImg[index].x, gkImg[index].y, 0);
+        });
+
+        Object.keys(tapPosition).forEach(function (index) {
             let position = addGraphic(
-                playPlace[index].background,
-                playPlace[index].opacity,
-                playPlace[index].x,
-                playPlace[index].y,
-                playPlace[index].width,
-                playPlace[index].height
+                tapPosition[index].background,
+                tapPosition[index].opacity,
+                tapPosition[index].x,
+                tapPosition[index].y,
+                tapPosition[index].width,
+                tapPosition[index].height
             );
             position.interactive = true;
             position.buttonMode = true;
@@ -779,13 +758,13 @@
 
                     let goal = randMissOrGoal();
                     if (gameTurn === PLAYER_TURN) {
-                        moveTo = playPlace[index].position.click;
-                        moveToX = !goal && moveTo !== 5 ? playPlace[index].position.ball.x_over : playPlace[index].position.ball.x;
-                        moveToY = !goal && moveTo !== 5 ? playPlace[index].position.ball.y_over : playPlace[index].position.ball.y;
+                        moveTo = tapPosition[index].position.click;
+                        moveToX = !goal && moveTo !== 5 ? tapPosition[index].position.ball.x_over : tapPosition[index].position.ball.x;
+                        moveToY = !goal && moveTo !== 5 ? tapPosition[index].position.ball.y_over : tapPosition[index].position.ball.y;
                     } else {
                         moveTo = randCpuPlace();
-                        moveToX = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.x_over : playPlace['place_' + moveTo].position.ball.x;
-                        moveToY = !goal && moveTo !== 5 ? playPlace['place_' + moveTo].position.ball.y_over : playPlace['place_' + moveTo].position.ball.y;
+                        moveToX = !goal && moveTo !== 5 ? tapPosition['place_' + moveTo].position.ball.x_over : tapPosition['place_' + moveTo].position.ball.x;
+                        moveToY = !goal && moveTo !== 5 ? tapPosition['place_' + moveTo].position.ball.y_over : tapPosition['place_' + moveTo].position.ball.y;
                     }
 
                     let moveBall = function () {
@@ -812,9 +791,9 @@
                         } else {
                             app.ticker.remove(moveBall);
                             if (gameTurn === PLAYER_TURN) {
-                                renderGk('cpu', gk, randCpuPlace(), playPlace[index].position.click, goal, ball);
+                                renderGk('cpu', gk, randCpuPlace(), tapPosition[index].position.click, goal, ball);
                             } else {
-                                renderGk('player', gk, playPlace[index].position.click, moveTo, goal, ball);
+                                renderGk('player', gk, tapPosition[index].position.click, moveTo, goal, ball);
                             }
                         }
                     };
@@ -825,10 +804,7 @@
             gamePlace.push(position);
         });
 
-        let gkSprite = PIXI.Texture.fromImage(gameTurn === PLAYER_TURN ? 'images/cpu/gk_def.png' : 'images/player/gk_def.png', 90, 70);
-        let gk = new PIXI.Sprite(gkSprite);
-        gameScene.addChild(gk);
-        setPosition(gk, 90, 70);
+        let gk = addImage(gameTurn === PLAYER_TURN ? 'images/cpu/gk_def.png' : 'images/player/gk_def.png', 90, 70);
         let swap = false;
         let moveGk = function () {
             if (gk.y < 73 && !swap) {
@@ -848,13 +824,13 @@
         let st = addImage('images/' + gameTurn + '/kick_1.png', 60, 145);
         let ball = addImage('images/share/ball_1.png', 100, 195);
 
-        Object.keys(playPlace).forEach(function (index) {
-            let text = addText(playPlace[index].title.text, {
+        Object.keys(tapPosition).forEach(function (index) {
+            let text = addText(tapPosition[index].title.text, {
                 fontSize: 24,
                 fill: '#FFFFFF',
                 stroke: '#FF0000',
                 strokeThickness: 4
-            }, playPlace[index].title.x, playPlace[index].title.y);
+            }, tapPosition[index].title.x, tapPosition[index].title.y);
 
             gamePlaceText.push(text);
         });
