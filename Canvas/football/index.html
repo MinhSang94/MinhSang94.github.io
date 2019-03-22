@@ -208,8 +208,12 @@
     }
 
     function addText(text, options, x, y, parent = gameScene) {
-        let element = new Text(text, options);
+        let textStyle = new PIXI.TextStyle(options);
+        let element = new Text(text, textStyle);
         setPosition(element, x, y);
+        if (options.align === 'right') {
+            element.anchor.x = 1;
+        }
         parent.addChild(element);
 
         return element;
@@ -242,7 +246,7 @@
         gameScene.removeChildren();
     }
 
-    setup();
+    waitingMatch();
 
     function setup() {
         // Create background
@@ -293,11 +297,13 @@
         }, 10, 2, scoreContainer);
 
         let scoreNumber = addText(score, {
+            width: 80,
+            align: 'right',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
             strokeThickness: 5
-        }, 200, 2);
+        }, 230, 2);
 
         // Create character name
         let nameContainer = addGraphic(0x000000, 0.6, 0, 50, 240, 60);
@@ -410,11 +416,13 @@
         gameScene.addChild(scoreTitle);
 
         addText(score, {
+            width: 80,
+            align: 'right',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
             strokeThickness: 5
-        }, 200, 2);
+        }, 230, 2);
 
         let loseImg = addImage('images/share/youlose.png', -193, 75);
         let moveLoseImg = function () {
@@ -434,11 +442,12 @@
                                 gameScene.addChild(background);
                                 addImage('images/share/end_background.png', -20, -5);
                                 addText(score, {
+                                    width: 80,
+                                    align: 'right',
                                     fontWeight: 'bold',
                                     fontSize: 20,
-                                    align: 'right',
                                     fill: '#000000',
-                                }, 150, 101);
+                                }, 210, 101);
                                 let continueImg = addImage('images/share/continue_label.png', 40, 190, 0);
                                 continueImg.interactive = true;
                                 continueImg.buttonMode = true;
@@ -472,11 +481,13 @@
             gameScene.addChild(scoreTitle);
 
             addText(score, {
+                width: 80,
+                align: 'right',
                 fontSize: 20,
                 fill: '#FFFFFF',
                 stroke: '#000000',
                 strokeThickness: 5
-            }, 200, 2);
+            }, 230, 2);
 
             let winImg = addImage('images/share/youwin.png', -193, 75);
             let moveWinImg = function () {
@@ -535,9 +546,11 @@
 
         gameScene.removeChild(gameBoarTurn);
         gameBoarTurn = addText(playerTurn === cpuTurn ? playerTurn + 1 : playerTurn, {
+            width: 20,
+            align: 'right',
             fontSize: 11,
             fill: '#000000'
-        }, 185, 190);
+        }, 198, 190);
 
         gameScene.removeChild(playerGameBoardText);
         playerGameBoardText = addText(playerScore, {
@@ -594,7 +607,7 @@
     function renderGoal() {
         if (gameTurn === 'player') {
             playerScore += 1;
-            score += round * 100;
+            score += round * 500;
         } else {
             cpuScore += 1;
         }
@@ -708,11 +721,13 @@
         gameScene.addChild(scoreTitle);
 
         addText(score, {
+            width: 80,
+            align: 'right',
             fontSize: 20,
             fill: '#FFFFFF',
             stroke: '#000000',
             strokeThickness: 5
-        }, 200, 2);
+        }, 230, 2);
 
         Object.keys(gkImg).forEach(function (index) {
             gkCharacter[index] = addImage(gkImg[index].url, gkImg[index].x, gkImg[index].y, 0);
