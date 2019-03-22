@@ -242,7 +242,7 @@
         gameScene.removeChildren();
     }
 
-    setup();
+    waitingMatch();
 
     function setup() {
         // Create background
@@ -312,42 +312,32 @@
             fill: '#f48642',
         }, 203, 55);
 
-        // Create vs
+        // Create character
         let vsContainer = addGraphic(0x000000, 1, 0, 164, 240, 0);
         let vsImg = addImage('images/share/vs.png', 90, 144, 0);
         vsImg.width = 67;
         vsImg.height = 41;
-        // Create player
         player = addImage('images/share/vs_player.png', -78, 68);
-        // Create cpu
         cpu = addImage('images/share/vs_cpu.png', 240, 81);
+
         let fadeOutElm = function () {
+            nameContainer.alpha = 0;
+            playerName.alpha = 0;
+            cpuName.alpha = 0;
+            scoreContainer.alpha = 0;
+            scoreTitle.alpha = 0;
+            scoreNumber.alpha = 0;
+
             if (player.x >= -90 || cpu.x < 240) {
                 player.x -= 3;
                 cpu.x += 3;
             }
 
             if (vsContainer.alpha > 0) {
-                vsContainer.alpha -= 0.02;
+                vsContainer.alpha -= 0.03;
             } else {
                 app.ticker.remove(fadeOutElm);
                 renderPlay();
-            }
-
-            if (nameContainer.alpha > 0 || scoreContainer.alpha > 0) {
-                nameContainer.alpha -= 0.02;
-                playerName.alpha -= 0.025;
-                cpuName.alpha -= 0.025;
-
-                scoreContainer.alpha -= 0.02;
-                scoreTitle.alpha -= 0.02;
-                scoreNumber.alpha -= 0.02;
-            } else {
-                playerName.alpha = 0;
-                cpuName.alpha = 0;
-
-                scoreTitle.alpha = 0;
-                scoreNumber.alpha = 0;
             }
 
             if (vsContainer.graphicsData[0].shape.width > 8) {
@@ -366,7 +356,6 @@
             }
         };
 
-        let fadeIn = true;
         let fadeInElm = function () {
             if (player.x < 0) {
                 player.x += 2;
@@ -391,7 +380,6 @@
                 vsImg.x += 1;
                 vsImg.height -= 2;
                 vsImg.y += 1;
-                fadeIn = false;
             }
 
             if (vsContainer.graphicsData[0].shape.height === 50 && vsImg.width < 67 && vsImg.height < 41) {
